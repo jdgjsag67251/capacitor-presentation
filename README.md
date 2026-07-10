@@ -14,6 +14,7 @@ This Capacitor plugin provides seamless integration with the Presentation API, e
 | ------------- | ----------------------------------------------------------- |
 | Capacitor v4  |  0.0.5|
 | Capacitor v6  |  0.1.x|
+| Capacitor v7  |  0.2.x|
 
 
 ```bash
@@ -50,14 +51,14 @@ https://github.com/user-attachments/assets/a2dbb1f7-6075-4285-885d-39136bc90d9b
 ### open(...)
 
 ```typescript
-open(options: OpenOptions) => Promise<OpenResponse>
+open(options: OpenOptions) => any
 ```
 
 | Param         | Type                                                |
 | ------------- | --------------------------------------------------- |
 | **`options`** | <code><a href="#openoptions">OpenOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#openresponse">OpenResponse</a>&gt;</code>
+**Returns:** <code>any</code>
 
 --------------------
 
@@ -65,14 +66,14 @@ open(options: OpenOptions) => Promise<OpenResponse>
 ### sendMessage(...)
 
 ```typescript
-sendMessage<T>(message: T) => Promise<T>
+sendMessage<T>(message: T) => any
 ```
 
 | Param         | Type           |
 | ------------- | -------------- |
 | **`message`** | <code>T</code> |
 
-**Returns:** <code>Promise&lt;T&gt;</code>
+**Returns:** <code>any</code>
 
 --------------------
 
@@ -80,8 +81,10 @@ sendMessage<T>(message: T) => Promise<T>
 ### terminate()
 
 ```typescript
-terminate() => Promise<void>
+terminate() => any
 ```
+
+**Returns:** <code>any</code>
 
 --------------------
 
@@ -137,10 +140,10 @@ addListener(eventName: 'onMessage', listenerFunc: (data: any) => void) => any
 ### getDisplays()
 
 ```typescript
-getDisplays() => Promise<{ displays: number; }>
+getDisplays() => any
 ```
 
-**Returns:** <code>Promise&lt;{ displays: number; }&gt;</code>
+**Returns:** <code>any</code>
 
 --------------------
 
@@ -148,13 +151,13 @@ getDisplays() => Promise<{ displays: number; }>
 ### Type Aliases
 
 
+#### OpenOptions
+
+<code>{} & ( | { type: 'url'; url: string; } | { type: 'video'; videoOptions: { videoUrl: string; showControls?: boolean; }; } | { type: 'html'; html: string; } )</code>
+
+
 #### OpenResponse
 
 <code>{ success?: any; error?: any; result?: any }</code>
-
-
-#### OpenOptions
-
-<code>{} & ( | { type: 'url'; url: string; } | { type: 'video'; videoOptions: { videoUrl: string; showControls?: boolean; }; } | { type: 'html'; html: string; } )</code>
 
 </docgen-api>

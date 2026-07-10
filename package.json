@@ -1,10 +1,15 @@
 {
   "name": "presentation-capacitor",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Capacitor Plugin for presentation api",
-  "main": "dist/plugin.cjs.js",
+  "main": "dist/esm/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/plugin.cjs.js",
+    "types": "./dist/esm/index.d.ts"
+  },
   "unpkg": "dist/plugin.js",
   "files": [
     "android/src/main/",
@@ -51,20 +56,18 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@capacitor/android": "^6.0.0",
-    "@capacitor/core": "^6.0.0",
+    "@capacitor/android": "^7.0.1",
+    "@capacitor/core": "^7.0.1",
     "@capacitor/docgen": "^0.2.2",
-    "@capacitor/ios": "^6.0.0",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
     "prettier-plugin-java": "^2.6.4",
     "rimraf": "^3.0.2",
     "rollup": "^2.32.0",
-    "swiftlint": "^1.0.1",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "@capacitor/core": "^6.0.0"
+    "@capacitor/core": "^7.0.1"
   },
   "prettier": "@ionic/prettier-config",
   "eslintConfig": {

@@ -1,5 +1,7 @@
 # Presentation API Capacitor Plugin
 
+**Forked from [TheeMachine/presentation-capacitor](https://github.com/TheeMachine/presentation-capacitor).**
+
 This Capacitor plugin provides seamless integration with the Presentation API, enabling developers to display content on secondary screens, such as projectors or external displays, directly from their mobile and web applications.
 
 ## Features
@@ -31,16 +33,16 @@ https://github.com/user-attachments/assets/a2dbb1f7-6075-4285-885d-39136bc90d9b
 
 <docgen-index>
 
-* [`open(...)`](#open)
-* [`sendMessage(...)`](#sendmessage)
-* [`getDisplays()`](#getdisplays)
-* [`terminate()`](#terminate)
-* [`addListener('onSuccessLoadUrl', ...)`](#addlisteneronsuccessloadurl-)
-* [`addListener('onFailLoadUrl', ...)`](#addlisteneronfailloadurl-)
-* [`addListener('onMessage', ...)`](#addlisteneronmessage-)
-* [`addListener('onClose', ...)`](#addlisteneronclose-)
-* [Interfaces](#interfaces)
-* [Type Aliases](#type-aliases)
+- [`open(...)`](#open)
+- [`sendMessage(...)`](#sendmessage)
+- [`getDisplays()`](#getdisplays)
+- [`terminate()`](#terminate)
+- [`addListener('onSuccessLoadUrl', ...)`](#addlisteneronsuccessloadurl-)
+- [`addListener('onFailLoadUrl', ...)`](#addlisteneronfailloadurl-)
+- [`addListener('onMessage', ...)`](#addlisteneronmessage-)
+- [`addListener('onClose', ...)`](#addlisteneronclose-)
+- [Interfaces](#interfaces)
+- [Type Aliases](#type-aliases)
 
 </docgen-index>
 
@@ -59,13 +61,12 @@ open(options: OpenOptions) => any
 
 **Returns:** <code>any</code>
 
---------------------
-
+---
 
 ### sendMessage(...)
 
 ```typescript
-sendMessage(message: any) => any
+sendMessage(message: string | object) => Promise<void>
 ```
 
 | Param         | Type             |
@@ -74,8 +75,7 @@ sendMessage(message: any) => any
 
 **Returns:** <code>any</code>
 
---------------------
-
+---
 
 ### getDisplays()
 
@@ -85,8 +85,7 @@ getDisplays() => any
 
 **Returns:** <code>any</code>
 
---------------------
-
+---
 
 ### terminate()
 
@@ -96,8 +95,7 @@ terminate() => any
 
 **Returns:** <code>any</code>
 
---------------------
-
+---
 
 ### addListener('onSuccessLoadUrl', ...)
 
@@ -112,8 +110,7 @@ addListener(eventName: "onSuccessLoadUrl", listenerFunc: () => void) => any
 
 **Returns:** <code>any</code>
 
---------------------
-
+---
 
 ### addListener('onFailLoadUrl', ...)
 
@@ -128,13 +125,12 @@ addListener(eventName: "onFailLoadUrl", listenerFunc: (error: string) => void) =
 
 **Returns:** <code>any</code>
 
---------------------
-
+---
 
 ### addListener('onMessage', ...)
 
 ```typescript
-addListener(eventName: "onMessage", listenerFunc: (message: any) => void) => any
+addListener(eventName: "onMessage", listenerFunc: (message: string | object) => void) => any
 ```
 
 | Param              | Type                                   |
@@ -144,8 +140,7 @@ addListener(eventName: "onMessage", listenerFunc: (message: any) => void) => any
 
 **Returns:** <code>any</code>
 
---------------------
-
+---
 
 ### addListener('onClose', ...)
 
@@ -160,11 +155,9 @@ addListener(eventName: "onClose", listenerFunc: () => void) => any
 
 **Returns:** <code>any</code>
 
---------------------
-
+---
 
 ### Interfaces
-
 
 #### PluginListenerHandle
 
@@ -172,14 +165,11 @@ addListener(eventName: "onClose", listenerFunc: () => void) => any
 | ------------ | ------------------------- |
 | **`remove`** | <code>() =&gt; any</code> |
 
-
 ### Type Aliases
-
 
 #### OpenOptions
 
-<code>{ 			type: "url"; 			url: string; 	 } | { 			type: "video"; 			options: { 				url: string; 				showControls?: boolean; 			}; 	 } | { 			type: "html"; 			html: string; 	 }</code>
-
+<code>{ type: "url"; url: string; } | { type: "video"; options: { url: string; showControls?: boolean; }; } | { type: "html"; html: string; }</code>
 
 #### OpenResponse
 

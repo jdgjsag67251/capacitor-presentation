@@ -5,13 +5,20 @@ body {
     font-family: sans-serif;
 }
 
-.container {
-    gap: 16px;
+body {
+    display: flex;
     width: 100vw;
     height: 100vh;
-    display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.container {
+    gap: 16px;
+    display: flex;
+    padding: 16px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .container > button {

@@ -19,8 +19,8 @@ importers:
         specifier: ^7.6.7
         version: 7.6.7(@capacitor/core@7.6.7)
       '@capacitor/docgen':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.3.1
+        version: 0.3.1
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
@@ -98,13 +98,10 @@ packages:
   '@capacitor/core@7.6.7':
     resolution: {integrity: sha512-DR0kqfcsDzWhvskz+sJWy41cdv+P1ITjmOYYG5WSV88EO6tx5Tf82M61vp4NjV7rfQDUAQjBAypgaTiB2/2oEg==}
 
-  '@capacitor/docgen@0.2.2':
-    resolution: {integrity: sha512-617jB5DlKjUljxfoANORWeqffsHqHekckH48oslKWFGzfCHYIAEPfJfMa5M4mVSzn2ifSvWB5C3st4augwhl5w==}
-    engines: {node: '>=14.5.0'}
+  '@capacitor/docgen@0.3.1':
+    resolution: {integrity: sha512-WBdAUquQC4hiZOVk1YbY5Rs3vlDrNdCGt3KGnMa2dc2UBa91Q7PQ/jLW/oZyfVIfiXWu7t1KUhhM3MyiZepUrQ==}
+    engines: {node: '>=18.0.0'}
     hasBin: true
-
-  '@types/node@14.18.63':
-    resolution: {integrity: sha512-fAtCfv4jJg+ExtXhvCkCqUKZ+4ok/JQk01qDKhL5BDDoS3AxKXhV5/MAVUZyQnSEd2GT92fkgZl0pz0Q0AzcIQ==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -224,15 +221,12 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@capacitor/docgen@0.2.2':
+  '@capacitor/docgen@0.3.1':
     dependencies:
-      '@types/node': 14.18.63
       colorette: 2.0.20
       github-slugger: 1.5.0
       minimist: 1.2.8
       typescript: 4.2.4
-
-  '@types/node@14.18.63': {}
 
   balanced-match@1.0.2: {}
 

@@ -48,10 +48,9 @@ document.getElementById("url")?.addEventListener("click", () => {
 
 {
 	const htmlElement = document.getElementById("html");
-	htmlElement?.setAttribute(
-		"disabled",
-		(!Capacitor.isNativePlatform()).toString(),
-	);
+	if (!Capacitor.isNativePlatform()) {
+		htmlElement?.setAttribute("disabled", "true");
+	}
 	htmlElement?.addEventListener("click", () => {
 		CapacitorPresentation.open({
 			type: "html",

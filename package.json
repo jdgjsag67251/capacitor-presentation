@@ -48,7 +48,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.5.2",
     "@capacitor/android": "^7.6.7",
-    "@capacitor/docgen": "^0.2.2",
+    "@capacitor/docgen": "^0.3.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.80.0",
     "typescript": "^5.9.3"

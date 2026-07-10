@@ -1,50 +1,52 @@
+import type { PluginListenerHandle } from "@capacitor/core";
+
+export type OpenOptions =
+	| {
+			type: "url";
+			url: string;
+	  }
+	| {
+			type: "video";
+			videoOptions: {
+				videoUrl: string;
+				showControls?: boolean;
+			};
+	  }
+	| {
+			type: "html";
+			html: string;
+	  };
+
+export type OpenResponse =
+	| { success: true }
+	| { success: false; error: string };
 
 export interface CapacitorPresentationPlugin {
-  open(options: OpenOptions): Promise<OpenResponse>;
-  sendMessage<T>(message: T): Promise<T>;
-  terminate(): Promise<void>;
+	open(options: OpenOptions): Promise<OpenResponse>;
+	sendMessage(message: Record<string, unknown>): Promise<void>;
+	getDisplays(): Promise<{ displays: number }>;
+	terminate(): Promise<void>;
 
-  /**
-   *
-   * @param eventName
-   * @param listenerFunc <br>
-   *
-   * Works only if type html of url or if browser
-   */
-  addListener(
-    eventName: 'onSuccessLoadUrl',
-    listenerFunc: (data: any) => void,
-  ): any;
-  addListener(
-    eventName: 'onFailLoadUrl',
-    listenerFunc: (data: any) => void,
-  ): any;
-
-  
-  addListener(
-    eventName: 'onMessage',
-    listenerFunc: (data: any) => void,
-  ): any;
-
-  getDisplays(): Promise<{ displays: number }>;
+	/**
+	 * @param eventName
+	 * @param listenerFunc <br>
+	 *
+	 * Works only if type html of url or if browser
+	 */
+	addListener(
+		eventName: "onSuccessLoadUrl",
+		listenerFunc: () => void,
+	): Promise<PluginListenerHandle>;
+	addListener(
+		eventName: "onFailLoadUrl",
+		listenerFunc: (error: string) => void,
+	): Promise<PluginListenerHandle>;
+	addListener(
+		eventName: "onMessage",
+		listenerFunc: (message: Record<string, unknown>) => void,
+	): Promise<PluginListenerHandle>;
+	addListener(
+		eventName: "onClose",
+		listenerFunc: () => void,
+	): Promise<PluginListenerHandle>;
 }
-
-export type OpenOptions = {} & (
-  | {
-      type: 'url';
-      url: string;
-    }
-  | {
-      type: 'video';
-      videoOptions: {
-        videoUrl: string;
-        showControls?: boolean;
-      };
-    }
-  | {
-      type: 'html';
-      html: string;
-    }
-);
-
-export type OpenResponse = { success?: any; error?: any; result?: any };

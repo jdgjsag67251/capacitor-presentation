@@ -1,87 +1,88 @@
-import { WebPlugin } from '@capacitor/core';
+import { WebPlugin } from "@capacitor/core";
+import type {
+	CapacitorPresentationPlugin,
+	OpenOptions,
+	OpenResponse,
+} from "./definitions";
 
-import type { CapacitorPresentationPlugin, OpenOptions, OpenResponse } from './definitions';
+export class CapacitorPresentationWeb
+	extends WebPlugin
+	implements CapacitorPresentationPlugin
+{
+	private presentationConnection: PresentationConnection | undefined;
 
-export class CapacitorPresentationWeb extends WebPlugin implements CapacitorPresentationPlugin {
+	async open(options: OpenOptions): Promise<OpenResponse> {
+		const data = (() => {
+			switch (options.type) {
+				case "url":
+					return options.url;
+				case "html":
+					return options.html;
+				case "video":
+					return options.videoOptions?.videoUrl;
+				default:
+					return null;
+			}
+		})();
 
-  private presentationConnection: any;
+		if (!data) {
+			throw new Error("Please enter all required values!");
+		}
 
-  async open(options: OpenOptions): Promise<OpenResponse> {
-    try {
-      let data = null;
-      switch (options.type) {
-        case 'url':
-          data = options.url;
-          break;
-        case 'html':
-          data = options.html;
-          break;
-        case 'video':
-          data = options.videoOptions?.videoUrl;
-      }
+		try {
+			await this.startDisplay(data);
 
-      if (!data) {
-        throw new Error('Please enter all required values!');
-      }
-      const start = await this.startDisplay(data);
-      this.notifyListeners('onSuccessLoadUrl', start);
-      return {
-        success: start,
-      };
-    } catch (error) {
-      console.log(error);
-      this.notifyListeners('onFailLoadUrl', error);
-      return {
-        error: error,
-        result: options
-      };
-    }
-  }
+			this.notifyListeners("onSuccessLoadUrl", undefined);
+			return { success: true };
+		} catch (error) {
+			this.notifyListeners("onFailLoadUrl", error);
 
-  async sendMessage<T>(message: T): Promise<any> {
-    this.notifyListeners('onMessage', message);
-    this.presentationConnection?.send(JSON.stringify(message));
-    return message
-  }
+			return {
+				error: error instanceof Error ? error.message : String(error),
+				success: false,
+			};
+		}
+	}
 
-  private async startDisplay(data: string) {
-    const presentationRequest = new (window as any).PresentationRequest([data]);
-    return new Promise<any>(async (resolve) => {
-      presentationRequest.addEventListener('connectionavailable', (event: any) => {
-        this.presentationConnection = event.connection;
-        resolve(this.presentationConnection);
-        this.presentationConnection.addEventListener('close', () => {
-          console.log('> Connection closed.');
-        });
-        this.presentationConnection.addEventListener('terminate', () => {
-          console.log('> Connection terminated.');
-        });
-        this.presentationConnection.addEventListener('message', (event: any) => {
-          console.log('> ' + event.data);
-        }); 
-      });    
-      await presentationRequest.start();
-      resolve(data);
-    })
-  }
+	async sendMessage(message: Record<string, unknown>): Promise<void> {
+		this.presentationConnection?.send(JSON.stringify(message));
+	}
 
-  async terminate() {
-    console.log(this.presentationConnection);
-    return this.presentationConnection?.terminate();
-  }
+	async terminate() {
+		return this.presentationConnection?.terminate();
+	}
 
-  async getDisplays(): Promise<{ displays: number }> {
-    const presentationRequest = new (window as any).PresentationRequest(['']);
+	async getDisplays(): Promise<{ displays: number }> {
+		const presentationRequest = new window.PresentationRequest([""]);
+		const { value } = await presentationRequest.getAvailability().catch(() => ({
+			value: false,
+		}));
 
-    try {
-      await presentationRequest.getAvailability();
-      return {
-        displays: 1,
-      };
-    } catch (error) {
-      return {
-        displays: 0,
-      };
-    }
-  }
+		return { displays: value ? 1 : 0 };
+	}
+
+	private async startDisplay(data: string): Promise<void> {
+		this.presentationConnection?.terminate();
+
+		const presentationRequest = new window.PresentationRequest([data]);
+		const connectionPromise = new Promise<PresentationConnectionAvailableEvent>(
+			(resolve) =>
+				presentationRequest.addEventListener("connectionavailable", resolve),
+		);
+
+		await presentationRequest.start();
+
+		const connectionEvent = await connectionPromise;
+		this.presentationConnection = connectionEvent.connection;
+
+		this.presentationConnection.addEventListener("close", () => {
+			this.notifyListeners("onClose", undefined);
+		});
+		this.presentationConnection.addEventListener("terminate", () => {
+			this.notifyListeners("onClose", undefined);
+		});
+		this.presentationConnection.addEventListener("message", (event) => {
+			this.notifyListeners("onMessage", event.data);
+		});
+	}
 }

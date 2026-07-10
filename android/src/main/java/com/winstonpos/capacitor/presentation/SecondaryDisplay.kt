@@ -14,41 +14,35 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.MediaController
-import android.widget.VideoView
 import com.getcapacitor.JSObject
 import java.io.IOException
-import java.util.Objects
 
-class SecondaryDisplay(private val outerContext: Context?, display: Display?) : Presentation(
+class SecondaryDisplay(
+    outerContext: Context?,
+    display: Display?,
+    private val onEvent: (name: String, value: JSObject) -> Unit,
+) : Presentation(
     outerContext, display
 ) {
-    var capPlugin: CapacitorPresentationPlugin = CapacitorPresentationPlugin()
     private var webServer: MyWebServer? = null
     protected var url: String = ""
     protected var video: String? = ""
     private var webView: WebView? = null
-    private var videoView: VideoView? = null
+
+    val isValid: Boolean
+        get() = this.display.isValid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_secondary_display)
         webView = findViewById<WebView?>(R.id.secondary_webview)
-        videoView = findViewById<VideoView>(R.id.videoView)
     }
 
-    fun init(type: OpenType?, data: VideoOptions) {
-        if (Objects.requireNonNull<OpenType?>(type) == OpenType.VIDEO) {
-            video = data.videoUrl
-            startVideo(data.showControls)
-        }
-    }
-
-    fun init(type: OpenType, data: String?) {
+    fun init(type: OpenType, url: String) {
         when (type) {
             OpenType.URL, OpenType.HTML -> {
-                url = data as String
-                this.startWebView(type, data)
+                this.url = url
+                this.startWebView(type, url)
             }
 
             else -> {}
@@ -82,7 +76,7 @@ class SecondaryDisplay(private val outerContext: Context?, display: Display?) : 
 
             webView!!.setWebViewClient(object : WebViewClient() {
                 override fun onPageFinished(view: WebView?, _url: String?) {
-                    capPlugin.notifyToSuccess(webView, _url)
+                    notifyToSuccess(webView, _url)
                 }
 
                 override fun onReceivedError(
@@ -91,7 +85,7 @@ class SecondaryDisplay(private val outerContext: Context?, display: Display?) : 
                     error: WebResourceError
                 ) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        capPlugin.notifyToFail(webView, error.getErrorCode())
+                        notifyToFail(webView, error.getErrorCode())
                     }
                 }
             })
@@ -106,29 +100,12 @@ class SecondaryDisplay(private val outerContext: Context?, display: Display?) : 
 
     fun sendMessage(jsonData: JSObject) {
         webView!!.post(Runnable {
-            capPlugin.notifyListener(capPlugin.ON_MESSAGE_EVENT, jsonData)
+            onEvent(ON_MESSAGE_EVENT, jsonData)
             webView!!.evaluateJavascript(
                 "javascript:window.receiveFromPresentationCapacitor(" + jsonData.toString() + ")",
                 null
             )
         })
-    }
-
-    private fun startVideo(showControls: Boolean) {
-        webView!!.setVisibility(View.GONE)
-        videoView!!.setVisibility(View.VISIBLE)
-
-        val videoUrl = video
-        val uri = Uri.parse(videoUrl)
-        videoView!!.setVideoURI(uri)
-
-        if (showControls) {
-            val mediaController = MediaController(this.getContext())
-            mediaController.setAnchorView(videoView)
-            videoView!!.setMediaController(mediaController)
-        }
-
-        videoView!!.start()
     }
 
     fun startWebServer(path: String?) {
@@ -139,5 +116,19 @@ class SecondaryDisplay(private val outerContext: Context?, display: Display?) : 
                 e.printStackTrace()
             }
         }
+    }
+
+    fun notifyToSuccess(view: WebView?, url: String?) {
+        val response = JSObject()
+        response.put("result", url)
+        response.put("message", "success")
+        onEvent(ON_SUCCESS_EVENT, response)
+    }
+
+    fun notifyToFail(view: WebView?, errorCode: Int) {
+        val response = JSObject()
+        response.put("result", errorCode)
+        response.put("message", "fail")
+        onEvent(ON_FAIL_EVENT, response)
     }
 }

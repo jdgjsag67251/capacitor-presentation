@@ -30,15 +30,6 @@ const htmlExample = `<!DOCTYPE html>
 </body>
 </html>`;
 
-document.getElementById("video")?.addEventListener("click", () => {
-	CapacitorPresentation.open({
-		type: "video",
-		options: {
-			url: "https://9ecfa743-2de6-4f2e-a113-183e933fb7d3.mdnplay.dev/shared-assets/videos/flower.mp4",
-		},
-	}).catch(console.error);
-});
-
 document.getElementById("url")?.addEventListener("click", () => {
 	CapacitorPresentation.open({
 		type: "url",

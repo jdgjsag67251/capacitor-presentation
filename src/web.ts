@@ -1,6 +1,7 @@
 import { WebPlugin } from "@capacitor/core";
 import type {
 	CapacitorPresentationPlugin,
+	Display,
 	OpenOptions,
 	OpenResponse,
 } from "./definitions";
@@ -16,8 +17,6 @@ export class CapacitorPresentationWeb
 			switch (options.type) {
 				case "url":
 					return options.url;
-				case "video":
-					return options.options?.url;
 				case "html":
 					throw new Error("Not supported on web");
 				default:
@@ -52,13 +51,13 @@ export class CapacitorPresentationWeb
 		return this.presentationConnection?.terminate();
 	}
 
-	async getDisplays(): Promise<{ displays: number }> {
+	async getDisplays(): Promise<{ displays: Display[] }> {
 		const presentationRequest = new window.PresentationRequest([""]);
 		const { value } = await presentationRequest.getAvailability().catch(() => ({
 			value: false,
 		}));
 
-		return { displays: value ? 1 : 0 };
+		return { displays: value ? [{ displayId: 0 }] : [] };
 	}
 
 	private async startDisplay(data: string): Promise<void> {

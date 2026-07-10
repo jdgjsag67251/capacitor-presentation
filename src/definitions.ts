@@ -7,8 +7,8 @@ export type OpenOptions =
 	  }
 	| {
 			type: "video";
-			videoOptions: {
-				videoUrl: string;
+			options: {
+				url: string;
 				showControls?: boolean;
 			};
 	  }

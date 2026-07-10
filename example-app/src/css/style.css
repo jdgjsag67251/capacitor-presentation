@@ -1,0 +1,42 @@
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.container {
+    gap: 16px;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container > button {
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 2rem;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    text-transform: uppercase;
+    background-color: purple;
+}
+
+.container > button:hover {
+    background-color: rebeccapurple;
+}
+
+.container > button:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.container > button.terminate {
+    background-color: orangered;
+}
+.container > button.terminate:hover {
+    background-color: darkorange;
+}

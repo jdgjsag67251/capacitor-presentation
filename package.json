@@ -6,9 +6,9 @@
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "exports": {
+    "types": "./dist/esm/index.d.ts",
     "import": "./dist/esm/index.js",
-    "require": "./dist/plugin.cjs.js",
-    "types": "./dist/esm/index.d.ts"
+    "require": "./dist/plugin.cjs.js"
   },
   "unpkg": "dist/plugin.js",
   "files": [
@@ -48,14 +48,13 @@
   "devDependencies": {
     "@biomejs/biome": "^2.5.2",
     "@capacitor/android": "^7.6.7",
-    "@capacitor/core": "^7.6.7",
     "@capacitor/docgen": "^0.2.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.80.0",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "@capacitor/core": "^7.0.1"
+    "@capacitor/core": "^7.6.7"
   },
   "capacitor": {
     "android": {

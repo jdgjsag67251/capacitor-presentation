@@ -1,26 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Capacitor Presentation Example App</title>
+        <meta
+            name="viewport"
+            content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
 
-<head>
-  <meta charset="utf-8" />
-  <title>Ionic App</title>
+        <link rel="stylesheet" href="./css/style.css" />
+        <meta name="theme-color" content="#31d53d" />
+    </head>
+    <body>
+        <div class="container">
+            <button type="button" id="video">Video</button>
+            <button type="button" id="url">URL</button>
+            <button type="button" id="html">HTML</button>
+            <button type="button" id="terminate" class="terminate">
+                Terminate
+            </button>
+        </div>
 
-  <base href="https://theemachine.github.io/presentation-capacitor/example-app/www/" />
-
-  <meta name="color-scheme" content="light dark" />
-  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="format-detection" content="telephone=no" />
-  <meta name="msapplication-tap-highlight" content="no" />
-
-  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
-
-  <!-- add to homescreen for ios -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-</head>
-
-<body>
-  <app-root></app-root>
-</body>
-
+        <script src="./js/index.ts" type="module"></script>
+    </body>
 </html>

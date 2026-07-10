@@ -178,7 +178,7 @@ addListener(eventName: "onClose", listenerFunc: () => void) => any
 
 #### OpenOptions
 
-<code>{ 			type: "url"; 			url: string; 	 } | { 			type: "video"; 			videoOptions: { 				videoUrl: string; 				showControls?: boolean; 			}; 	 } | { 			type: "html"; 			html: string; 	 }</code>
+<code>{ 			type: "url"; 			url: string; 	 } | { 			type: "video"; 			options: { 				url: string; 				showControls?: boolean; 			}; 	 } | { 			type: "html"; 			html: string; 	 }</code>
 
 
 #### OpenResponse

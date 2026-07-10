@@ -16,10 +16,10 @@ export class CapacitorPresentationWeb
 			switch (options.type) {
 				case "url":
 					return options.url;
-				case "html":
-					return options.html;
 				case "video":
-					return options.videoOptions?.videoUrl;
+					return options.options?.url;
+				case "html":
+					throw new Error("Not supported on web");
 				default:
 					return null;
 			}

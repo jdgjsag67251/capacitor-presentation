@@ -86,7 +86,7 @@ public class CapacitorPresentationPlugin extends Plugin {
             data = call.getString("html", null);
             break;
           case VIDEO:
-            data = new VideoOptions(call.getObject("videoOptions").getString("videoUrl"), (Boolean.TRUE.equals(call.getBoolean("showControls"))));
+            data = new VideoOptions(call.getObject("options").getString("url"), (Boolean.TRUE.equals(call.getBoolean("showControls"))));
             break;
 
         }

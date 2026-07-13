@@ -20,7 +20,7 @@ const val ON_FAIL_EVENT: String = "onFailLoadUrl"
 const val ON_MESSAGE_EVENT: String = "onMessage"
 const val ON_CLOSE_EVENT: String = "onClose"
 
-@CapacitorPlugin(name = "CapacitorPresentation")
+@CapacitorPlugin(name = "Presentation")
 class CapacitorPresentationPlugin : Plugin() {
     private var display: SecondaryDisplay? = null
 
@@ -37,7 +37,7 @@ class CapacitorPresentationPlugin : Plugin() {
             OpenType.HTML -> call.getString("html", null)
         } ?: return call.reject("Missing argument")
 
-        openSecondDisplay { display ->
+        openSecondDisplay(call.getInt("displayId", null)) { display ->
             val ret = JSObject()
 
             if (display == null) {
@@ -45,8 +45,10 @@ class CapacitorPresentationPlugin : Plugin() {
                 ret.put("error", "No displays")
             } else {
                 try {
-                    display.show()
-                    display.init(type, url)
+                    activity.runOnUiThread {
+                        display.show()
+                        display.load(type, url)
+                    }
 
                     ret.put("success", true)
                 } catch (e: Exception) {
@@ -178,7 +180,10 @@ class CapacitorPresentationPlugin : Plugin() {
         }
     }
 
-    private fun openSecondDisplay(callback: (display: SecondaryDisplay?) -> Unit) {
+    private fun openSecondDisplay(
+        preferredDisplayId: Int?,
+        callback: (display: SecondaryDisplay?) -> Unit
+    ) {
         if (this.display != null && this.display!!.isValid) {
             return callback(this.display)
         }
@@ -192,14 +197,18 @@ class CapacitorPresentationPlugin : Plugin() {
             if (displayManager == null) {
                 callback(null)
             } else {
-                val presentationDisplay =
+                val displays =
                     displayManager!!.getDisplays(DisplayManager.DISPLAY_CATEGORY_PRESENTATION)
-                        .first()
+                val presentationDisplay = if (preferredDisplayId != null) {
+                    displays.find { display -> display.displayId == preferredDisplayId }
+                } else {
+                    displays.firstOrNull()
+                }
 
                 if (presentationDisplay == null) {
                     callback(null)
                 } else {
-                    display = SecondaryDisplay(context, presentationDisplay) { name, data ->
+                    display = SecondaryDisplay(context, presentationDisplay, logTag) { name, data ->
                         notifyListeners(name, data, true)
                     }
 

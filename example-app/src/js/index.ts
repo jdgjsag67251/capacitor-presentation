@@ -1,5 +1,5 @@
 import { Capacitor } from "@capacitor/core";
-import { CapacitorPresentation } from "capacitor-presentation";
+import { Presentation } from "capacitor-presentation";
 
 const htmlExample = `<!DOCTYPE html>
 <html lang="en">
@@ -31,7 +31,7 @@ const htmlExample = `<!DOCTYPE html>
 </html>`;
 
 document.getElementById("url")?.addEventListener("click", () => {
-	CapacitorPresentation.open({
+	Presentation.open({
 		type: "url",
 		url: "https://github.com",
 	}).catch(console.error);
@@ -43,7 +43,7 @@ document.getElementById("url")?.addEventListener("click", () => {
 		htmlElement?.setAttribute("disabled", "true");
 	}
 	htmlElement?.addEventListener("click", () => {
-		CapacitorPresentation.open({
+		Presentation.open({
 			type: "html",
 			html: htmlExample,
 		}).catch(console.error);
@@ -51,5 +51,5 @@ document.getElementById("url")?.addEventListener("click", () => {
 }
 
 document.getElementById("terminate")?.addEventListener("click", () => {
-	CapacitorPresentation.terminate().catch(console.error);
+	Presentation.terminate().catch(console.error);
 });

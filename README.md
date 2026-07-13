@@ -7,7 +7,7 @@ This Capacitor plugin provides seamless integration with the Presentation API, e
 ## Features
 
 - **Multiple Screen Support:** Easily present content on external displays or projectors.
-- **Customizable Content:** Display custom HTML, videos, or other types of media.
+- **Customizable Content:** Display custom HTML, or load a url.
 - **Cross-Platform Compatibility:** Works on Android and web platforms.
 - **Simple Integration:** Easily integrate with Capacitor and your existing project.
 - **Real-Time Updates:** Send real-time content updates to the external screen.
@@ -29,20 +29,41 @@ npx cap sync
 
 https://github.com/user-attachments/assets/a2dbb1f7-6075-4285-885d-39136bc90d9b
 
+## Example
+
+```typescript title=app.ts
+import { Presentation } from "presentation-capacitor";
+
+await Presentation.addListener("onMessage", console.log);
+await Presentation.addListener("onSuccessLoadUrl", () => {
+  Presentation.sendMessage({ data: "Ping" }).catch(console.error);
+});
+await Presentation.open({ type: "url", url: "/secondary_display" });
+```
+
+```typescript title=secondary_display.ts
+window.onPresentationMessage = ({ data }) => {
+  window.sendPresentationMessage({
+    data: data === "Ping" ? "Pong" : "Unknown message",
+  });
+};
+```
+
 ## API
 
 <docgen-index>
 
-- [`open(...)`](#open)
-- [`sendMessage(...)`](#sendmessage)
-- [`getDisplays()`](#getdisplays)
-- [`terminate()`](#terminate)
-- [`addListener('onSuccessLoadUrl', ...)`](#addlisteneronsuccessloadurl-)
-- [`addListener('onFailLoadUrl', ...)`](#addlisteneronfailloadurl-)
-- [`addListener('onMessage', ...)`](#addlisteneronmessage-)
-- [`addListener('onClose', ...)`](#addlisteneronclose-)
-- [Interfaces](#interfaces)
-- [Type Aliases](#type-aliases)
+* [`open(...)`](#open)
+* [`sendMessage(...)`](#sendmessage)
+* [`getDisplays()`](#getdisplays)
+* [`terminate()`](#terminate)
+* [`addListener('onSuccessLoadUrl', ...)`](#addlisteneronsuccessloadurl-)
+* [`addListener('onFailLoadUrl', ...)`](#addlisteneronfailloadurl-)
+* [`addListener('onMessage', ...)`](#addlisteneronmessage-)
+* [`addListener('onClose', ...)`](#addlisteneronclose-)
+* [Interfaces](#interfaces)
+* [Type Aliases](#type-aliases)
+* [Enums](#enums)
 
 </docgen-index>
 
@@ -61,12 +82,13 @@ open(options: OpenOptions) => any
 
 **Returns:** <code>any</code>
 
----
+--------------------
+
 
 ### sendMessage(...)
 
 ```typescript
-sendMessage(message: string | object) => Promise<void>
+sendMessage(message: any) => any
 ```
 
 | Param         | Type             |
@@ -75,7 +97,8 @@ sendMessage(message: string | object) => Promise<void>
 
 **Returns:** <code>any</code>
 
----
+--------------------
+
 
 ### getDisplays()
 
@@ -85,7 +108,8 @@ getDisplays() => any
 
 **Returns:** <code>any</code>
 
----
+--------------------
+
 
 ### terminate()
 
@@ -95,7 +119,8 @@ terminate() => any
 
 **Returns:** <code>any</code>
 
----
+--------------------
+
 
 ### addListener('onSuccessLoadUrl', ...)
 
@@ -110,7 +135,8 @@ addListener(eventName: "onSuccessLoadUrl", listenerFunc: () => void) => any
 
 **Returns:** <code>any</code>
 
----
+--------------------
+
 
 ### addListener('onFailLoadUrl', ...)
 
@@ -125,12 +151,13 @@ addListener(eventName: "onFailLoadUrl", listenerFunc: (error: string) => void) =
 
 **Returns:** <code>any</code>
 
----
+--------------------
+
 
 ### addListener('onMessage', ...)
 
 ```typescript
-addListener(eventName: "onMessage", listenerFunc: (message: string | object) => void) => any
+addListener(eventName: "onMessage", listenerFunc: (message: any) => void) => any
 ```
 
 | Param              | Type                                   |
@@ -140,7 +167,8 @@ addListener(eventName: "onMessage", listenerFunc: (message: string | object) => 
 
 **Returns:** <code>any</code>
 
----
+--------------------
+
 
 ### addListener('onClose', ...)
 
@@ -155,9 +183,11 @@ addListener(eventName: "onClose", listenerFunc: () => void) => any
 
 **Returns:** <code>any</code>
 
----
+--------------------
+
 
 ### Interfaces
+
 
 #### PluginListenerHandle
 
@@ -165,14 +195,40 @@ addListener(eventName: "onClose", listenerFunc: () => void) => any
 | ------------ | ------------------------- |
 | **`remove`** | <code>() =&gt; any</code> |
 
+
 ### Type Aliases
+
 
 #### OpenOptions
 
-<code>{ type: "url"; url: string; } | { type: "video"; options: { url: string; showControls?: boolean; }; } | { type: "html"; html: string; }</code>
+<code>{ displayId?: unknown } & ( 	| { 			type: "url"; 			url: string; 	 } 	| { 			type: "html"; 			html: string; 	 } )</code>
+
 
 #### OpenResponse
 
 <code>{ success: true } | { success: false; error: string }</code>
+
+
+#### Display
+
+<code>{ 	displayId: unknown; } & Partial&lt;<a href="#androiddisplaydetails">AndroidDisplayDetails</a>&gt;</code>
+
+
+#### AndroidDisplayDetails
+
+<code>{ 	name: string; 	isHdr?: boolean; 	rotation?: <a href="#androiddisplaydetailsrotation">AndroidDisplayDetailsRotation</a>; 	/** In pixels */ 	width?: number; 	/** In pixels */ 	height?: number; 	isDefaultDisplay?: boolean; 	cutout?: { 		safeInsetTop: number; 		safeInsetLeft: number; 		safeInsetBottom: number; 		safeInsetRight: number; 	}; 	productInfo?: { 		manufacturerPnpId: string; 		productUId: string; 		name?: string; 		modelYear?: number; 		manufactureYear?: number; 		manufactureWeek?: number; 	}; }</code>
+
+
+### Enums
+
+
+#### AndroidDisplayDetailsRotation
+
+| Members             | Value            | Description |
+| ------------------- | ---------------- | ----------- |
+| **`None`**          | <code>0</code>   | In degrees  |
+| **`SidewaysLeft`**  | <code>90</code>  | In degrees  |
+| **`UpsideDown`**    | <code>180</code> | In degrees  |
+| **`SidewaysRight`** | <code>270</code> | In degrees  |
 
 </docgen-api>

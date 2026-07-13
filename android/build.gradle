@@ -59,5 +59,4 @@ dependencies {
     implementation project(':capacitor-android')
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'org.nanohttpd:nanohttpd:2.3.1'
 }

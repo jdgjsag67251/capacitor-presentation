@@ -6,6 +6,7 @@ import type {
 	OpenResponse,
 } from "./definitions";
 
+// TODO: similar event API
 export class CapacitorPresentationWeb
 	extends WebPlugin
 	implements CapacitorPresentationPlugin

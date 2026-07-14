@@ -9,30 +9,42 @@ type EventHandlers = {
 	onFailLoadUrl: (...args: unknown[]) => void;
 	onMessage: (value: Record<string, unknown>) => void;
 };
-const eventHandler = new (class {
-	private handlers: Partial<EventHandlers> = {};
+const getEventHandler = (() => {
+	class CapacitorEventHandler {
+		private handlers: Partial<EventHandlers> = {};
 
-	constructor() {
-		Promise.all([
-			Presentation.addListener("onSuccessLoadUrl", (...args) => {
-				this.handlers.onSuccessLoadUrl?.(...args);
-			}),
-			Presentation.addListener("onFailLoadUrl", (...args) => {
-				this.handlers.onFailLoadUrl?.(...args);
-			}),
-			Presentation.addListener("onMessage", (...args) => {
-				this.handlers.onMessage?.(...args);
-			}),
-		]);
+		constructor() {
+			Promise.all([
+				Presentation.addListener("onSuccessLoadUrl", (...args) => {
+					this.handlers.onSuccessLoadUrl?.(...args);
+				}),
+				Presentation.addListener("onFailLoadUrl", (...args) => {
+					this.handlers.onFailLoadUrl?.(...args);
+				}),
+				Presentation.addListener("onMessage", (...args) => {
+					this.handlers.onMessage?.(...args);
+				}),
+			]).catch(console.error);
+		}
+
+		setHandlers(handlers: Partial<EventHandlers>) {
+			this.handlers = handlers;
+		}
+
+		removeHandlers() {
+			this.handlers = {};
+		}
 	}
 
-	setHandlers(handlers: Partial<EventHandlers>) {
-		this.handlers = handlers;
-	}
+	let instance: CapacitorEventHandler | undefined;
 
-	removeHandlers() {
-		this.handlers = {};
-	}
+	return () => {
+		if (!instance) {
+			instance = new CapacitorEventHandler();
+		}
+
+		return instance;
+	};
 })();
 
 function App() {
@@ -79,20 +91,24 @@ function App() {
 	};
 
 	useEffect(() => {
-		eventHandler.setHandlers({
-			onSuccessLoadUrl: () => {
-				addMessage({ type: "plain", value: "Loaded display" });
-			},
-			onFailLoadUrl: () => {
-				addMessage({ type: "error", value: "Failed to load display" });
-			},
-			onMessage: ({ data }) => {
-				addMessage({ type: "plain", value: String(data) });
-			},
-		});
+		if (active) {
+			const eventHandler = getEventHandler();
 
-		return eventHandler.removeHandlers;
-	}, [addMessage]);
+			eventHandler.setHandlers({
+				onSuccessLoadUrl: () => {
+					addMessage({ type: "plain", value: "Loaded display" });
+				},
+				onFailLoadUrl: () => {
+					addMessage({ type: "error", value: "Failed to load display" });
+				},
+				onMessage: ({ data }) => {
+					addMessage({ type: "plain", value: String(data) });
+				},
+			});
+
+			return () => eventHandler.removeHandlers();
+		}
+	}, [active, addMessage]);
 
 	return (
 		<Container

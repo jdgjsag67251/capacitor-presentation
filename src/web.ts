@@ -6,7 +6,6 @@ import type {
 	OpenResponse,
 } from "./definitions";
 
-// TODO: similar event API
 export class CapacitorPresentationWeb
 	extends WebPlugin
 	implements CapacitorPresentationPlugin
@@ -44,8 +43,12 @@ export class CapacitorPresentationWeb
 		}
 	}
 
-	async sendMessage(message: Record<string, unknown>): Promise<void> {
-		this.presentationConnection?.send(JSON.stringify(message));
+	async sendMessage(message: { data: Record<string, unknown> }): Promise<void> {
+		if (!message.data) {
+			throw new Error("Invalid arguments");
+		}
+
+		this.presentationConnection?.send(JSON.stringify({ data: message.data }));
 	}
 
 	async terminate() {
@@ -82,7 +85,48 @@ export class CapacitorPresentationWeb
 			this.notifyListeners("onClose", undefined);
 		});
 		this.presentationConnection.addEventListener("message", (event) => {
-			this.notifyListeners("onMessage", event.data);
+			const data = (() => {
+				try {
+					return JSON.parse(event.data)?.data;
+				} catch {
+					return null;
+				}
+			})();
+
+			if (data) {
+				this.notifyListeners("onMessage", { data });
+			}
 		});
 	}
 }
+
+export const setupWebPresentationReceiverAPI = async () => {
+	if (!navigator.presentation?.receiver) {
+		throw new Error("Presentation receiver is not available");
+	}
+
+	const setupReceiverMessaging = (connection: PresentationConnection) => {
+		connection.onmessage = (event) => {
+			// @ts-expect-error: missing types
+			window.onPresentationMessage?.(JSON.parse(event.data));
+		};
+
+		// @ts-expect-error: missing types
+		window.sendPresentationMessage = (value: {
+			data: Record<string, unknown>;
+		}) => {
+			connection.send(JSON.stringify(value));
+		};
+	};
+
+	const list = await navigator.presentation.receiver.connectionList;
+
+	if (list.connections.length) {
+		setupReceiverMessaging(list.connections[0]);
+	} else {
+		list.onconnectionavailable = (event) => {
+			list.onconnectionavailable = null;
+			setupReceiverMessaging(event.connection);
+		};
+	}
+};

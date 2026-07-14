@@ -2,6 +2,9 @@ import { Alert, Button, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { render } from "./shared";
 
+// Required for the custom web presentation API to be available
+import "capacitor-presentation";
+
 interface TypedWindow extends Window {
 	onPresentationMessage?: (value: { data: any }) => void;
 	sendPresentationMessage(value: { data: any }): void;

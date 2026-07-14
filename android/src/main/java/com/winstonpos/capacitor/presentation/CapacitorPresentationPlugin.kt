@@ -8,12 +8,14 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.Display
 import android.view.Surface
+import android.webkit.URLUtil
 import com.getcapacitor.JSArray
 import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
 import com.getcapacitor.PluginMethod
 import com.getcapacitor.annotation.CapacitorPlugin
+import java.net.URL
 
 const val ON_SUCCESS_EVENT: String = "onSuccessLoadUrl"
 const val ON_FAIL_EVENT: String = "onFailLoadUrl"
@@ -33,9 +35,22 @@ class CapacitorPresentationPlugin : Plugin() {
         val type =
             getResultType(call.getString("type")) ?: return call.reject("Missing 'type' argument")
         val url = when (type) {
-            OpenType.URL -> call.getString("url", null)
-            OpenType.HTML -> call.getString("html", null)
+            OpenType.HTML -> call.getString("html", "")
+            OpenType.URL -> {
+                val value = call.getString("url", "")
+
+                if (URLUtil.isValidUrl(value)) {
+                    value
+                } else {
+                    val baseUrl = URL(bridge.localUrl)
+                    URL(baseUrl, value).toString()
+                }
+            }
         } ?: return call.reject("Missing argument")
+
+        if (url.isEmpty()) {
+            return call.reject("Invalid argument")
+        }
 
         openSecondDisplay(call.getInt("displayId", null)) { display ->
             val ret = JSObject()
@@ -70,7 +85,8 @@ class CapacitorPresentationPlugin : Plugin() {
 
     @PluginMethod
     fun sendMessage(call: PluginCall) {
-        display?.sendMessage(call.getObject("data"))
+        val data = call.getObject("data") ?: return call.reject("Invalid argument")
+        display?.sendMessage(data)
         call.resolve()
     }
 
@@ -208,7 +224,12 @@ class CapacitorPresentationPlugin : Plugin() {
                 if (presentationDisplay == null) {
                     callback(null)
                 } else {
-                    display = SecondaryDisplay(context, presentationDisplay, logTag) { name, data ->
+                    display = SecondaryDisplay(
+                        context,
+                        presentationDisplay,
+                        logTag,
+                        bridge,
+                    ) { name, data ->
                         notifyListeners(name, data, true)
                     }
 

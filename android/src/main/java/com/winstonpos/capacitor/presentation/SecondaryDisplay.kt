@@ -11,16 +11,18 @@ import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.core.net.toUri
+import com.getcapacitor.Bridge
 import com.getcapacitor.JSObject
 
 class SecondaryDisplay(
     outerContext: Context?,
     display: Display?,
     private val logTag: String,
+    private val bridge: Bridge,
     private val onEvent: (name: String, value: JSObject?) -> Unit,
 ) : Presentation(
     outerContext, display
@@ -44,11 +46,10 @@ class SecondaryDisplay(
         val webView = this.initWebView() ?: return
 
         webView.post {
-            val path = url.toUri().toString()
             if (type == OpenType.HTML) {
-                webView.loadDataWithBaseURL(null, path, "text/html", "UTF-8", null)
+                webView.loadDataWithBaseURL(null, url, "text/html", "UTF-8", null)
             } else {
-                webView.loadUrl(path)
+                webView.loadUrl(url)
             }
         }
     }
@@ -74,6 +75,13 @@ class SecondaryDisplay(
             webView.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
             webView.webChromeClient = WebChromeClient()
             webView.webViewClient = object : WebViewClient() {
+                override fun shouldInterceptRequest(
+                    view: WebView,
+                    request: WebResourceRequest
+                ): WebResourceResponse? {
+                    return bridge.localServer.shouldInterceptRequest(request)
+                }
+
                 override fun onPageFinished(view: WebView?, url: String?) {
                     super.onPageFinished(view, url)
                     Log.d(logTag, "Load finished")
@@ -88,6 +96,11 @@ class SecondaryDisplay(
                     """.trimIndent()
 
                     view?.evaluateJavascript(script, null)
+                }
+
+                override fun onPageCommitVisible(view: WebView?, url: String?) {
+                    super.onPageCommitVisible(view, url)
+                    Log.d(logTag, "Page visible")
 
                     val response = JSObject()
                     response.put("success", true)
@@ -102,10 +115,12 @@ class SecondaryDisplay(
                     super.onReceivedError(view, request, error)
                     Log.d(logTag, "Load error: {$error}")
 
-                    val response = JSObject()
-                    response.put("success", false)
-                    response.put("error", error.description)
-                    onEvent(ON_FAIL_EVENT, response)
+                    if (request != null && request.isForMainFrame) {
+                        val response = JSObject()
+                        response.put("success", false)
+                        response.put("error", error.description)
+                        onEvent(ON_FAIL_EVENT, response)
+                    }
                 }
             }
 

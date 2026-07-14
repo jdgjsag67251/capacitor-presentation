@@ -88,12 +88,12 @@ open(options: OpenOptions) => any
 ### sendMessage(...)
 
 ```typescript
-sendMessage(message: any) => any
+sendMessage(message: { data: Record<string, unknown>; }) => any
 ```
 
-| Param         | Type             |
-| ------------- | ---------------- |
-| **`message`** | <code>any</code> |
+| Param         | Type                        |
+| ------------- | --------------------------- |
+| **`message`** | <code>{ data: any; }</code> |
 
 **Returns:** <code>any</code>
 
@@ -157,13 +157,13 @@ addListener(eventName: "onFailLoadUrl", listenerFunc: (error: string) => void) =
 ### addListener('onMessage', ...)
 
 ```typescript
-addListener(eventName: "onMessage", listenerFunc: (message: any) => void) => any
+addListener(eventName: "onMessage", listenerFunc: (message: { data: Record<string, unknown>; }) => void) => any
 ```
 
-| Param              | Type                                   |
-| ------------------ | -------------------------------------- |
-| **`eventName`**    | <code>'onMessage'</code>               |
-| **`listenerFunc`** | <code>(message: any) =&gt; void</code> |
+| Param              | Type                                              |
+| ------------------ | ------------------------------------------------- |
+| **`eventName`**    | <code>'onMessage'</code>                          |
+| **`listenerFunc`** | <code>(message: { data: any; }) =&gt; void</code> |
 
 **Returns:** <code>any</code>
 

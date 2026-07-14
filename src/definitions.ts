@@ -56,7 +56,7 @@ export type Display = {
 
 export interface CapacitorPresentationPlugin {
 	open(options: OpenOptions): Promise<OpenResponse>;
-	sendMessage(message: Record<string, unknown>): Promise<void>;
+	sendMessage(message: { data: Record<string, unknown> }): Promise<void>;
 	getDisplays(): Promise<{ displays: Display[] }>;
 	terminate(): Promise<void>;
 
@@ -76,7 +76,7 @@ export interface CapacitorPresentationPlugin {
 	): Promise<PluginListenerHandle>;
 	addListener(
 		eventName: "onMessage",
-		listenerFunc: (message: Record<string, unknown>) => void,
+		listenerFunc: (message: { data: Record<string, unknown> }) => void,
 	): Promise<PluginListenerHandle>;
 	addListener(
 		eventName: "onClose",
